@@ -19,7 +19,8 @@ Returns array of service names
 Returns array of endpoint objects `host:port`
 
 ## Starting server
-1. ./register --heartbeat <heartbeat lifetime in seconds>
+1. `make build`
+1. `make start`
 
 ## Implementing clients
 1. client must register the service in intervals to keep it alive
