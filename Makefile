@@ -1,4 +1,4 @@
-.PHONY: build run start stop sh
+.PHONY: build run start stop sh clean
 
 build:
 	docker build -t service-discovery .
@@ -14,3 +14,10 @@ stop:
 
 sh:
 	docker run --rm -it --entrypoint sh service-discovery
+
+build/image.tar: build
+	mkdir -p $(dir $@)
+	docker save service-discovery -o $@
+
+clean:
+	rm -rf build

@@ -19,13 +19,16 @@ Returns array of service names
 Returns array of endpoint objects `host:port`
 
 ## Starting server
-1. `make build`
+1. `make image`
 1. `make start`
 
 ## Implementing clients
 1. client must register the service in intervals to keep it alive
 1. call get endpoints to get list of endpoints
 1. manually load balance between endpoints
+
+## build image as tar
+`make build/image.tar`
 
 ## TODO
 * Custom DNS
