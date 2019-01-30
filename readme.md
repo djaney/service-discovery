@@ -19,7 +19,8 @@ Returns array of service names
 Returns array of endpoint objects `host:port`
 
 ## Starting server
-1. `make image`
+Start registry at port 5000 and DNS at port 5053(tcp/udp)
+1. `make build`
 1. `make start`
 
 ## Implementing clients
@@ -29,6 +30,3 @@ Returns array of endpoint objects `host:port`
 
 ## build image as tar
 `make build/image.tar`
-
-## TODO
-* Custom DNS

@@ -136,7 +136,7 @@ def add_service():
 
 
 def handle_bad_request(err):
-    return jsonify({"message": err.description}), err.code
+    return jsonify({"message": err.description or err}), err.code
 
 
 def cleanup():
