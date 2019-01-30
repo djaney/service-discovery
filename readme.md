@@ -1,6 +1,6 @@
 # Simple Service Discovery
 
-## Endpoints
+## Service Registry
 
 ### Register service `POST /`
 Sample request:
@@ -14,9 +14,13 @@ only service name is required
 * Status `200` on success
 * Status `400` on error
 ### Get all registered service `GET /`
-Returns array of service names
+Returns array of service names `[service_names...]`
 ### Get all endpoints of a particular service `GET /<service_name>`
-Returns array of endpoint objects `host:port`
+Returns map of endpoint objects `{"host:port": {params...}}`
+
+## DNS Server
+Custom DNS Server requests the service registry. The `service_name` is the hostname and A record is returned.
+If hostname does not exist in registry, request is forwarded to another DNS Server
 
 ## Starting server
 Start registry at port 5000 and DNS at port 5053(tcp/udp)
