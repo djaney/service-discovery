@@ -4,7 +4,6 @@ from threading import Thread, Event
 class MortalThread(Thread):
     def __init__(self, sleep_interval=1, **kwargs):
         super().__init__(**kwargs)
-        self._target = None
         self._kill = Event()
         self._interval = sleep_interval
 

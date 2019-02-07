@@ -28,8 +28,6 @@ class ServiceManager:
         else:
             return None
 
-
-
         return endpoints
 
     def add(self, service_name, host, port):
@@ -65,13 +63,7 @@ class ServiceManager:
         """
         Delete if last heartbeat is more than lifespan
         """
-        for_delete = []
         for service_key, service in self.__services.items():
             for key, obj in service.items():
                 if time() - obj['lhb'] > self.__heartbeat_lifetime:
-                    for_delete.append((service_key, key))
-
-        for sk, k in for_delete:
-            del self.__services[sk][k]
-            if len(self.__services[sk]) == 0:
-                del self.__services[sk]
+                    self.__services[service_key][key]['alive'] = False
