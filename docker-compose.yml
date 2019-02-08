@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  registry:
+    build: .
+    entrypoint: ./registry.py --heartbeat=20 --port=5000
+    ports:
+      - ${REGISTRY_PORT:-5000}:5000
+    volumes:
+      - .:/app
+  dns:
+    build: .
+    entrypoint: ./dns.py --registry=registry:${REGISTRY_PORT:-5000}
+    ports:
+      - ${DNS_PORT:-5053}:5053/udp
+      - ${DNS_PORT:-5053}:5053/tcp
+    depends_on:
+      - registry
+    volumes:
+      - .:/app
+  test:
+    image: python:3.7.2-alpine3.7
+    depends_on:
+      - registry
+    entrypoint: python3 -m unittest -v /app/tests.py
+    volumes:
+      - .:/app

@@ -22,7 +22,7 @@ def get_services():
 
 def get_service(service_name):
     service = services.get(service_name)
-    if service is not None:
+    if service is not None and len(service) > 0:
         return jsonify(service)
     else:
         return '', 404
@@ -41,14 +41,12 @@ def add_service():
     if 'service_name' not in post_data:
         raise ValidationException(description="Invalid service_name")
 
-    services.add(post_data['service_name'], post_data['host'], post_data['port'])
+    if 'status' not in post_data:
+        raise ValidationException(description="Invalid status")
+
+    services.add(post_data['service_name'], post_data['host'], post_data['port'], post_data['status'])
 
     return '', 200
-
-
-def handle_bad_request(err):
-    return jsonify({"message": err.description or err}), err.code
-
 
 def cleanup():
     services.stop_heartbeat_checker()
@@ -61,9 +59,6 @@ def main(args):
     app.add_url_rule('/<service_name>', 'get_service', get_service, methods=['GET'])
     app.add_url_rule('/', 'add_service', add_service, methods=['POST'])
 
-    # error handler
-    app.register_error_handler(HTTPException, handle_bad_request)
-
     # start heartbeat checking thread
     services.start_heartbeat_checker(args.heartbeat)
 
@@ -71,10 +66,11 @@ def main(args):
     atexit.register(cleanup)
 
     # run in all interfaces
-    app.run(host="0.0.0.0")
+    app.run(host="0.0.0.0", port=args.port)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Start Service')
     parser.add_argument('--heartbeat', help="Heartbeat lifetime", type=int, default=0)
+    parser.add_argument('--port', help="Service port", type=int, default=5000)
     main(parser.parse_args())
