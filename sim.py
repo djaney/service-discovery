@@ -2,7 +2,7 @@
 from flask import Flask
 import argparse
 from threading import Thread, Event
-from urllib import request
+from urllib import request, error
 import json
 import atexit
 
@@ -23,7 +23,6 @@ args = parser.parse_args()
 
 
 def badump(stop, service_name, depends_on, heartbeat):
-
     if depends_on is None:
         depends_on = []
 
@@ -32,16 +31,29 @@ def badump(stop, service_name, depends_on, heartbeat):
 
             app.logger.debug("sent heartbeat")
             req = request.Request('http://registry:5000',
-                                  data=json.dumps({"service_name": service_name, "status": "UP", "depends_on": depends_on})
+                                  data=json.dumps(
+                                      {"service_name": service_name, "status": "UP"})
                                   .encode("utf-8"),
-                                  headers={"Content-Type": "application/json"})
-            res = request.urlopen(req)
+                                  headers={"Content-Type": "application/json"},
+                                  method="PUT")
+            request.urlopen(req)
 
             if heartbeat == 0:
-                break # kill it
+                break  # kill it
+
+        except error.HTTPError as e:
+            if e.code == 404:
+                app.logger.debug("registering service")
+                req = request.Request('http://registry:5000',
+                                      data=json.dumps(
+                                          {"service_name": service_name, "depends_on": depends_on})
+                                      .encode("utf-8"),
+                                      headers={"Content-Type": "application/json"},
+                                      method="POST")
+                request.urlopen(req)
 
         except Exception as e:
-            app.logger.error(str(e))
+            app.logger.debug(str(e))
         stop.wait(heartbeat)
 
 
