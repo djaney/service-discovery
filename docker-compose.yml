@@ -18,10 +18,3 @@ services:
       - registry
     volumes:
       - .:/app
-  test:
-    image: python:3.7.2-alpine3.7
-    depends_on:
-      - registry
-    entrypoint: python3 -m unittest -v /app/tests.py
-    volumes:
-      - .:/app
