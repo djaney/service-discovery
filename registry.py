@@ -57,6 +57,11 @@ def add_service():
     return '', 200
 
 
+def remove_service(service_name):
+    services.remove(service_name)
+    return '', 200
+
+
 def heartbeat_service():
     post_data = request.get_json()
     # default is IP of caller
@@ -91,6 +96,7 @@ def main(args):
     app.add_url_rule('/<service_name>/details', 'get_service_details', get_service_details, methods=['GET'])
     app.add_url_rule('/', 'add_service', add_service, methods=['POST'])
     app.add_url_rule('/', 'heartbeat_service', heartbeat_service, methods=['PUT'])
+    app.add_url_rule('/<service_name>', 'remove_service', remove_service, methods=['DELETE'])
 
     # start heartbeat checking thread
     services.start_heartbeat_checker(args.heartbeat)

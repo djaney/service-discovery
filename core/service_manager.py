@@ -75,6 +75,14 @@ class ServiceManager:
                 'depends_on': depends_on
             }
 
+    def remove(self, service_name):
+        if service_name not in self.__services.keys():
+            return False
+
+        del self.__services[service_name]
+
+        return True
+
     def heartbeat(self, service_name, host, port, status):
         """
         Register a service
