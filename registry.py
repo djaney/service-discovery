@@ -38,13 +38,16 @@ def add_service():
     if 'port' not in post_data:
         post_data['port'] = 80
 
+    if 'depends_on' not in post_data:
+        post_data['depends_on'] = []
+
     if 'service_name' not in post_data:
         raise ValidationException(description="Invalid service_name")
 
     if 'status' not in post_data:
         raise ValidationException(description="Invalid status")
 
-    services.add(post_data['service_name'], post_data['host'], post_data['port'], post_data['status'])
+    services.add(post_data['service_name'], post_data['host'], post_data['port'], post_data['status'], depends_on=post_data['depends_on'])
 
     return '', 200
 

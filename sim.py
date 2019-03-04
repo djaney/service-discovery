@@ -18,13 +18,18 @@ def healthcheck():
 parser = argparse.ArgumentParser(description='Start Service')
 parser.add_argument('name', help="service name", type=str)
 parser.add_argument('--port', help="port", type=int, default=80)
+parser.add_argument('--depends', '-d', help="depends on", type=str, action='append')
 args = parser.parse_args()
 
 
-def badump(stop, service_name):
+def badump(stop, service_name, depends_on):
+
+    if depends_on is None:
+        depends_on = []
+
     while not stop.is_set():
         req = request.Request('http://registry:5000',
-                              data=json.dumps({"service_name": service_name, "status": "UP"})
+                              data=json.dumps({"service_name": service_name, "status": "UP", "depends_on": depends_on})
                               .encode("utf-8"),
                               headers={"Content-Type": "application/json"})
         res = request.urlopen(req)
@@ -37,7 +42,7 @@ def cleanup():
 
 stop = Event()
 app.logger.debug("starting service")
-hearthbeat = Thread(target=badump, args=[stop, args.name])
+hearthbeat = Thread(target=badump, args=[stop, args.name, args.depends])
 hearthbeat.start()
 
 # cleanup threads on exit

@@ -21,6 +21,7 @@ class ServiceManager:
     __heartbeat_checker_thread = None
 
     PARAM_STATUS = 'status'
+    PARAM_DEPENDS = 'depends_on'
 
     def get_all(self):
         """
@@ -38,16 +39,18 @@ class ServiceManager:
             endpoints = {}
             for key, value in self.__services[service_name].items():
                 status = value.get(self.PARAM_STATUS)
+                depends = value.get(self.PARAM_DEPENDS)
                 if status is Status.UP:
-                    endpoints[key] = {'status': str(status)}
+                    endpoints[key] = {'status': str(status), 'depends_on': depends}
         else:
             return None
 
         return endpoints
 
-    def add(self, service_name, host, port, status):
+    def add(self, service_name, host, port, status, depends_on=[]):
         """
         Register a service
+        :param depends_on:
         :param service_name:
         :param host:
         :param port:
@@ -59,7 +62,11 @@ class ServiceManager:
 
         if service_name not in self.__services.keys():
             self.__services[service_name] = {}
-        self.__services[service_name]['{}:{}'.format(host, port)] = {'lhb': time(), self.PARAM_STATUS: Status[status], 'healthcheck': '/'}
+        self.__services[service_name]['{}:{}'.format(host, port)] = {
+            'lhb': time(),
+            self.PARAM_STATUS: Status[status],
+            'healthcheck': '/',
+            'depends_on': depends_on}
 
     def start_heartbeat_checker(self, lifetime):
         """

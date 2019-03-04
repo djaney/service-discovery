@@ -3,7 +3,7 @@ version: '3'
 services:
   sim_rest:
     build: .
-    entrypoint: ./sim.py sim_rest
+    entrypoint: ./sim.py sim_rest -d sim_user -d sim_videos
     volumes:
       - .:/app
     expose:
@@ -31,7 +31,7 @@ services:
 
   sim_videos:
     build: .
-    entrypoint: ./sim.py sim_videos
+    entrypoint: ./sim.py sim_videos -d sim_user
     volumes:
       - .:/app
     expose:
