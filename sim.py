@@ -4,7 +4,6 @@ import argparse
 from threading import Thread, Event
 from urllib import request
 import json
-import random
 import atexit
 
 app = Flask(__name__)
@@ -18,11 +17,12 @@ def healthcheck():
 parser = argparse.ArgumentParser(description='Start Service')
 parser.add_argument('name', help="service name", type=str)
 parser.add_argument('--port', help="port", type=int, default=80)
+parser.add_argument('--heartbeat', help="heartbeat interval", type=int, default=10)
 parser.add_argument('--depends', '-d', help="depends on", type=str, action='append')
 args = parser.parse_args()
 
 
-def badump(stop, service_name, depends_on):
+def badump(stop, service_name, depends_on, heartbeat):
 
     if depends_on is None:
         depends_on = []
@@ -36,9 +36,13 @@ def badump(stop, service_name, depends_on):
                                   .encode("utf-8"),
                                   headers={"Content-Type": "application/json"})
             res = request.urlopen(req)
+
+            if heartbeat == 0:
+                break # kill it
+
         except Exception as e:
             app.logger.error(str(e))
-        stop.wait(random.randint(8, 12))
+        stop.wait(heartbeat)
 
 
 def cleanup():
@@ -47,7 +51,7 @@ def cleanup():
 
 stop = Event()
 app.logger.debug("starting service")
-hearthbeat = Thread(target=badump, args=[stop, args.name, args.depends])
+hearthbeat = Thread(target=badump, args=[stop, args.name, args.depends, args.heartbeat])
 hearthbeat.start()
 
 # cleanup threads on exit

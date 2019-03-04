@@ -17,7 +17,18 @@ class Dot:
                 dot.edge(service_name, dep)
 
             for node, node_data in service_data['nodes'].items():
-                color = 'bgcolor="red"' if node_data['status'] != Status.UP else ''
+
+                if node_data['status'] == Status.UP:
+                    color = 'bgcolor="green"'
+                elif node_data['status'] == Status.DOWN:
+                    color = 'bgcolor="red"'
+                elif node_data['status'] == Status.STARTING:
+                    color = 'bgcolor="blue"'
+                elif node_data['status'] == Status.OUT_OF_SERVICE:
+                    color = 'bgcolor="grey"'
+                else:
+                    color = ''
+
                 content += "<tr><td cellpadding='6' {}>{}</td></tr>".format(color, node)
 
             content += "</table>>"
