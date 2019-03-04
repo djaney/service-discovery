@@ -6,6 +6,7 @@ import argparse
 from werkzeug.exceptions import HTTPException
 
 from core.service_manager import ServiceManager
+from core.dot import Dot
 
 
 class ValidationException(HTTPException):
@@ -36,6 +37,9 @@ def get_service_details(service_name):
     else:
         return '', 404
 
+def graph():
+    d = Dot(services)
+    return d.print(), 200
 
 def add_service():
     post_data = request.get_json()
@@ -70,6 +74,7 @@ def main(args):
     app = Flask(__name__)
     # routes
     app.add_url_rule('/', 'get_services', get_services, methods=['GET'])
+    app.add_url_rule('/graph', 'graph', graph, methods=['GET'])
     app.add_url_rule('/<service_name>', 'get_service', get_service, methods=['GET'])
     app.add_url_rule('/<service_name>/details', 'get_service_details', get_service_details, methods=['GET'])
     app.add_url_rule('/', 'add_service', add_service, methods=['POST'])

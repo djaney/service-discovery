@@ -102,3 +102,6 @@ class ServiceManager:
             for key, obj in service['nodes'].items():
                 if time() - obj['lhb'] > self.__heartbeat_lifetime:
                     self.__services[service_key]['nodes'][key][self.PARAM_STATUS] = Status.OUT_OF_SERVICE
+
+    def services(self):
+        return self.__services

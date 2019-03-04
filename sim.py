@@ -28,12 +28,16 @@ def badump(stop, service_name, depends_on):
         depends_on = []
 
     while not stop.is_set():
-        app.logger.debug("sent heartbeat")
-        req = request.Request('http://registry:5000',
-                              data=json.dumps({"service_name": service_name, "status": "UP", "depends_on": depends_on})
-                              .encode("utf-8"),
-                              headers={"Content-Type": "application/json"})
-        res = request.urlopen(req)
+        try:
+
+            app.logger.debug("sent heartbeat")
+            req = request.Request('http://registry:5000',
+                                  data=json.dumps({"service_name": service_name, "status": "UP", "depends_on": depends_on})
+                                  .encode("utf-8"),
+                                  headers={"Content-Type": "application/json"})
+            res = request.urlopen(req)
+        except Exception as e:
+            app.logger.error(str(e))
         stop.wait(random.randint(8, 12))
 
 
