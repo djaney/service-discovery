@@ -5,14 +5,20 @@
 ### Register service `POST /`
 Sample request:
 ```json
-    {"service_name":"test-service-0.0.1", "host":  "somewhere.com", "port":  8080}
+    {"service_name":"test-service-0.0.1", "depends_on":  ["service_name"]}
 ```
 only service name is required
 
-* Call to register service.
-* can also be called to for heartbeat
-* Status `200` on success
-* Status `400` on error
+### Heartbeat service `PUT /`
+Sample request:
+```json
+    {"service_name":"test-service-0.0.1", "host":  "hostname", "port":  80, "status":  "UP"}
+```
+service name, status is required
+
+### Remove service `DELETE /<service_name>`
+No other parameter
+
 ### Get all registered service `GET /`
 Returns array of service names `[service_names...]`
 ### Get all endpoints of a particular service `GET /<service_name>`
