@@ -28,6 +28,15 @@ def get_service(service_name):
         return '', 404
 
 
+def get_service_details(service_name):
+    service = services.get(service_name, fields=['depends_on'])
+    if service is not None and len(service) > 0:
+        for v in service.values():
+            return jsonify(v)
+    else:
+        return '', 404
+
+
 def add_service():
     post_data = request.get_json()
 
@@ -47,9 +56,11 @@ def add_service():
     if 'status' not in post_data:
         raise ValidationException(description="Invalid status")
 
-    services.add(post_data['service_name'], post_data['host'], post_data['port'], post_data['status'], depends_on=post_data['depends_on'])
+    services.add(post_data['service_name'], post_data['host'], post_data['port'], post_data['status'],
+                 depends_on=post_data['depends_on'])
 
     return '', 200
+
 
 def cleanup():
     services.stop_heartbeat_checker()
@@ -60,6 +71,7 @@ def main(args):
     # routes
     app.add_url_rule('/', 'get_services', get_services, methods=['GET'])
     app.add_url_rule('/<service_name>', 'get_service', get_service, methods=['GET'])
+    app.add_url_rule('/<service_name>/details', 'get_service_details', get_service_details, methods=['GET'])
     app.add_url_rule('/', 'add_service', add_service, methods=['POST'])
 
     # start heartbeat checking thread

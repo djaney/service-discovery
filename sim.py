@@ -28,6 +28,7 @@ def badump(stop, service_name, depends_on):
         depends_on = []
 
     while not stop.is_set():
+        app.logger.debug("sent heartbeat")
         req = request.Request('http://registry:5000',
                               data=json.dumps({"service_name": service_name, "status": "UP", "depends_on": depends_on})
                               .encode("utf-8"),
@@ -48,4 +49,4 @@ hearthbeat.start()
 # cleanup threads on exit
 atexit.register(cleanup)
 
-app.run(host="0.0.0.0", port=args.port)
+app.run(host="0.0.0.0", port=args.port, debug=0)

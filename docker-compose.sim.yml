@@ -10,7 +10,6 @@ services:
       - 80
     environment:
       - FLASK_ENV
-      - FLASK_DEBUG=0
     deploy:
       mode: replicated
       replicas: 2
@@ -24,7 +23,6 @@ services:
       - 80
     environment:
       - FLASK_ENV
-      - FLASK_DEBUG=0
     deploy:
       mode: replicated
       replicas: 2
@@ -38,7 +36,6 @@ services:
       - 80
     environment:
       - FLASK_ENV
-      - FLASK_DEBUG=0
     deploy:
       mode: replicated
       replicas: 2

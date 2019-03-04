@@ -30,18 +30,21 @@ class ServiceManager:
         """
         return list(self.__services.keys())
 
-    def get(self, service_name):
+    def get(self, service_name, fields=['status']):
         """
         Return one services
         :return: Services
         """
         if service_name in self.__services:
             endpoints = {}
-            for key, value in self.__services[service_name].items():
-                status = value.get(self.PARAM_STATUS)
-                depends = value.get(self.PARAM_DEPENDS)
-                if status is Status.UP:
-                    endpoints[key] = {'status': str(status), 'depends_on': depends}
+            for key, value in self.__services[service_name]['nodes'].items():
+                endpoints[key] = {}
+                for f in fields:
+                    if f == self.PARAM_STATUS:
+                        endpoints[key][f] = str(value.get(f))
+                    else:
+                        endpoints[key][f] = value.get(f)
+
         else:
             return None
 
@@ -61,8 +64,8 @@ class ServiceManager:
             raise ValueError("Invalid Status")
 
         if service_name not in self.__services.keys():
-            self.__services[service_name] = {}
-        self.__services[service_name]['{}:{}'.format(host, port)] = {
+            self.__services[service_name] = {'nodes': {}}
+        self.__services[service_name]['nodes']['{}:{}'.format(host, port)] = {
             'lhb': time(),
             self.PARAM_STATUS: Status[status],
             'healthcheck': '/',
@@ -91,6 +94,6 @@ class ServiceManager:
         Delete if last heartbeat is more than lifespan
         """
         for service_key, service in self.__services.items():
-            for key, obj in service.items():
+            for key, obj in service['nodes'].items():
                 if time() - obj['lhb'] > self.__heartbeat_lifetime:
-                    self.__services[service_key][key][self.PARAM_STATUS] = Status.OUT_OF_SERVICE
+                    self.__services[service_key]['nodes'][key][self.PARAM_STATUS] = Status.OUT_OF_SERVICE
