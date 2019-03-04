@@ -29,7 +29,7 @@ def get_service(service_name):
 
 
 def get_service_details(service_name):
-    service = services.get(service_name, fields=['depends_on'])
+    service = services.get(service_name, fields=['depends_on', 'healthcheck'])
     if service is not None and len(service) > 0:
         for v in service.values():
             return jsonify(v)
