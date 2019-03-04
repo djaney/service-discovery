@@ -1,0 +1,46 @@
+version: '3'
+
+services:
+  sim_rest:
+    build: .
+    entrypoint: ./sim.py sim_rest
+    volumes:
+      - .:/app
+    expose:
+      - 80
+    environment:
+      - FLASK_ENV
+      - FLASK_DEBUG=0
+    deploy:
+      mode: replicated
+      replicas: 2
+
+  sim_user:
+    build: .
+    entrypoint: ./sim.py sim_user
+    volumes:
+      - .:/app
+    expose:
+      - 80
+    environment:
+      - FLASK_ENV
+      - FLASK_DEBUG=0
+    deploy:
+      mode: replicated
+      replicas: 2
+
+  sim_videos:
+    build: .
+    entrypoint: ./sim.py sim_videos
+    volumes:
+      - .:/app
+    expose:
+      - 80
+    environment:
+      - FLASK_ENV
+      - FLASK_DEBUG=0
+    deploy:
+      mode: replicated
+      replicas: 2
+
+

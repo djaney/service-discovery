@@ -8,3 +8,5 @@ services:
     entrypoint: python3 -m unittest -v /app/tests.py
     volumes:
       - .:/app
+    environment:
+      - FLASK_DEBUG=0
