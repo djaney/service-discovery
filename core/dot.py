@@ -14,7 +14,10 @@ class Dot:
             content += "<tr><td cellpadding='6'><b>{}</b></td></tr>".format(service_name)
 
             for dep in service_data['depends_on']:
-                dot.edge(service_name, dep)
+                if dep in self.service_manager.services().keys():
+                    dot.edge(service_name, dep)
+                else:
+                    dot.edge(service_name, dep, color="red")
 
             for node, node_data in service_data['nodes'].items():
 

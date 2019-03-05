@@ -3,7 +3,7 @@ version: '3'
 services:
   sim_rest:
     build: .
-    entrypoint: ./sim.py sim_rest -d sim_user -d sim_videos
+    entrypoint: ./sim.py sim_rest.rest.0.0.0 -d sim_user.rest.0.0.0 -d sim_videos.rest.0.0.0
     volumes:
       - .:/app
     expose:
@@ -16,7 +16,7 @@ services:
 
   sim_user:
     build: .
-    entrypoint: ./sim.py sim_user
+    entrypoint: ./sim.py sim_user.rest.0.0.0
     volumes:
       - .:/app
     expose:
@@ -29,7 +29,7 @@ services:
 
   sim_videos:
     build: .
-    entrypoint: ./sim.py sim_videos -d sim_user
+    entrypoint: ./sim.py sim_videos.rest.0.0.0 -d sim_user.rest.0.0.0
     volumes:
       - .:/app
     expose:
@@ -42,7 +42,20 @@ services:
 
   sim_chat:
     build: .
-    entrypoint: ./sim.py sim_chat -d sim_user -d sim_rest --heartbeat 0
+    entrypoint: ./sim.py sim_chat.rest.0.0.0 -d sim_user.rest.0.0.0 -d sim_rest.rest.0.0.0 -d nothing --heartbeat 0
+    volumes:
+      - .:/app
+    expose:
+      - 80
+    environment:
+      - FLASK_ENV
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  sim_unused:
+    build: .
+    entrypoint: ./sim.py sim_unused.rest.0.0.0 -d sim_user.rest.0.0.0 -d sim_rest.rest.0.0.0
     volumes:
       - .:/app
     expose:
