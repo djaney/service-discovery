@@ -1,5 +1,7 @@
 # Simple Service Discovery
 
+[![Build Status](https://travis-ci.com/djaney/.svg?branch=master)](https://travis-ci.com/djaney/service-discovery)
+
 ## Service Registry
 
 ### Register service `POST /`
