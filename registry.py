@@ -86,8 +86,7 @@ def heartbeat_service():
 def cleanup():
     services.stop_heartbeat_checker()
 
-
-def main(args):
+def get_app(args):
     app = Flask(__name__)
     # routes
     app.add_url_rule('/', 'get_services', get_services, methods=['GET'])
@@ -103,13 +102,18 @@ def main(args):
 
     # cleanup threads on exit
     atexit.register(cleanup)
+    return app
+
+def main():
 
     # run in all interfaces
+    parser = argparse.ArgumentParser(description='Start Service')
+    parser.add_argument('--heartbeat', help="Heartbeat lifetime", type=int, default=0)
+    parser.add_argument('--port', help="Service port", type=int, default=5000)
+    args = parser.parse_args()
+    app = get_app(args)
     app.run(host="0.0.0.0", port=args.port)
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Start Service')
-    parser.add_argument('--heartbeat', help="Heartbeat lifetime", type=int, default=0)
-    parser.add_argument('--port', help="Service port", type=int, default=5000)
-    main(parser.parse_args())
+    main()

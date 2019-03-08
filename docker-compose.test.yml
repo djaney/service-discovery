@@ -2,11 +2,12 @@ version: '3'
 
 services:
   test:
-    image: python:3.7.2-alpine3.7
+    build:
+      context: .
+      args:
+        - env=test
     depends_on:
       - registry
-    entrypoint: python3 -m unittest -v /app/tests.py
+    entrypoint: pytest -v
     volumes:
       - .:/app
-    environment:
-      - FLASK_DEBUG=0
